@@ -93,12 +93,13 @@ const getValidCommand = (command) => {
   return false;
 };
 
-const executeCommand = async (command, message) => {
+const executeCommand = async (command, args, message) => {
   // If you need to perform any specific action based on a command then you would need a case statement
   // If its just text reply it will be handled by default, just add replies in the constant file
+  console.log(command, args);
   switch (command) {
     case constants.COMMANDNAMES.FREE:
-      message.reply("Searching for this weeks free games on EPIC Stores");
+      message.reply("Checking for this weeks free games on EPIC Store");
       let games = await getWeeklyFreeEpicGames();
 
       if (games) {
@@ -126,4 +127,3 @@ module.exports = {
   getValidCommand,
   executeCommand,
 };
-
