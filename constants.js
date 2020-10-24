@@ -1,7 +1,27 @@
 module.exports = {
-  COMMANDS: {
+  COMMANDNAMES: {
+    HELLO: "HELLO",
     FREE: "FREE",
   },
+  COMMANDS: [
+    {
+      id: "HELLO",
+      name: "Greeting",
+      keywords: ["Hey", "Hello", "Heya", "Hola"],
+      responses: ["Hello friend!"],
+    },
+    {
+      id: "FREE",
+      name: "Search Free Games",
+      keywords: [
+        "Free",
+        "Suggest some free games",
+        "I want some free games",
+        "I want free games",
+        "Is Epic giving away free games?",
+      ],
+    },
+  ],
   DATE_FORMAT: "do MMMM hh:mm a",
   APIS: {
     EPIC_STORES_WEEKLY_FREE_GAMES:
