@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const constants = require("./constants");
 const utils = require("./utils");
 const bot = new Discord.Client();
 
@@ -18,19 +17,18 @@ bot.on("message", async (message) => {
   if (message.author.bot) return;
   const botID = bot.user.id;
 
-  console.log(botID);
   const mentionIDs = message.mentions.users.map((user) => user.id);
 
   // if bot is not mentioned ignore the message
   if (!mentionIDs.includes(botID)) {
     return;
   }
-  console.log("Message content", message.content);
-  message.reply("Hello there");
+
   let prefix = `<@!${botID}>`;
   const withoutPrefix = message.content.slice(prefix.length).trim();
   const messageCommand = utils.getValidCommand(withoutPrefix);
   // Check if the entire message is the command
+
   if (messageCommand) {
     await utils.executeCommand(messageCommand, message);
   } else {
