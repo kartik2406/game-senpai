@@ -30,13 +30,18 @@ bot.on("message", async (message) => {
   // Check if the entire message is the command
 
   if (messageCommand) {
-    await utils.executeCommand(messageCommand, message);
+    await utils.executeCommand(messageCommand, null, message);
   } else {
     //TODO:
     // command must contain args, parse the string to split it
     const split = withoutPrefix.split(" ");
     const command = split[0];
     const args = split.slice(1);
-    console.log({ command, args });
+    const commandName = utils.getValidCommand(command);
+    if (commandName) {
+      await utils.executeCommand(commandName, args, message);
+    } else {
+      console.log("Not valid");
+    }
   }
 });
