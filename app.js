@@ -41,6 +41,7 @@ bot.on("message", async (message) => {
     if (commandName) {
       await utils.executeCommand(commandName, args, message);
     } else {
+      utils.saySomethingCool(message)
       console.log("Not valid");
     }
   }

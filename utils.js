@@ -93,6 +93,12 @@ const getValidCommand = (command) => {
   return false;
 };
 
+const saySomethingCool = (message) => {
+  let coolResponses = COMMMAND_RESPONSES.COOL;
+  let toal = coolResponses.length - 1;
+  message.reply(coolResponses[random(0, toal)]);
+};
+
 const executeCommand = async (command, args, message) => {
   // If you need to perform any specific action based on a command then you would need a case statement
   // If its just text reply it will be handled by default, just add replies in the constant file
@@ -118,6 +124,7 @@ const executeCommand = async (command, args, message) => {
       } else {
         // Opps, I don't understand this. Dont Panic, Say something cool!
         console.log("Not recogzined");
+        saySomethingCool(message);
       }
   }
 };
@@ -126,4 +133,5 @@ module.exports = {
   getFreeGamesEmbed,
   getValidCommand,
   executeCommand,
+  saySomethingCool,
 };
