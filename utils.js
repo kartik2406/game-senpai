@@ -2,7 +2,8 @@ const axios = require("axios");
 const constants = require("./constants");
 const Discord = require("discord.js");
 const format = require("date-fns/format");
-
+const { random } = require("lodash");
+const { COMMMAND_RESPONSES } = require("./constants");
 const getWeeklyFreeEpicGames = async () => {
   try {
     let response = await axios(constants.APIS.EPIC_STORES_WEEKLY_FREE_GAMES);
@@ -43,7 +44,6 @@ const getWeeklyFreeEpicGames = async () => {
       (game) =>
         game.discountPrice === "0" || game.offerDates.endDate <= new Date()
     );
-    console.log("Current Free games", JSON.stringify(currentFreeGames));
     return currentFreeGames;
   } catch (err) {
     console.log(err);
@@ -89,28 +89,35 @@ const getValidCommand = (command) => {
       keyWords.some((keyWord) => keyWord.toLowerCase() == command.toLowerCase())
     )
       return validCommand.id;
-    break;
   }
   return false;
 };
 
 const executeCommand = async (command, message) => {
+  // If you need to perform any specific action based on a command then you would need a case statement
+  // If its just text reply it will be handled by default, just add replies in the constant file
   switch (command) {
     case constants.COMMANDNAMES.FREE:
       message.reply("Searching for this weeks free games on EPIC Stores");
       let games = await getWeeklyFreeEpicGames();
-      console.log(games);
 
       if (games) {
         games.forEach((game) => message.channel.send(getFreeGamesEmbed(game)));
       }
 
       break;
-    case constants.COMMANDNAMES.HELLO:
-      let response = response
-      break;
     default:
-      console.log("Not recogzined");
+      let availableResponses = COMMMAND_RESPONSES[command]
+        ? COMMMAND_RESPONSES[command].length
+        : 0;
+      if (availableResponses) {
+        let responseNo = random(0, availableResponses - 1);
+        let response = COMMMAND_RESPONSES[command][responseNo];
+        message.reply(response);
+      } else {
+        // Opps, I don't understand this. Dont Panic, Say something cool!
+        console.log("Not recogzined");
+      }
   }
 };
 module.exports = {
@@ -120,4 +127,3 @@ module.exports = {
   executeCommand,
 };
 
-// console.log(executeCommand("FREE"));

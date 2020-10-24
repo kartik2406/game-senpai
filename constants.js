@@ -3,12 +3,12 @@ module.exports = {
     HELLO: "HELLO",
     FREE: "FREE",
   },
+  COMMMAND_RESPONSES: { HELLO: ["Hello friend!", "Well hello there!"] },
   COMMANDS: [
     {
       id: "HELLO",
       name: "Greeting",
-      keywords: ["Hey", "Hello", "Heya", "Hola"],
-      responses: ["Hello friend!"],
+      keywords: ["Hey", "Hi", "Hello", "Heya", "Hola"],
     },
     {
       id: "FREE",
