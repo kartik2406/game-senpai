@@ -3,12 +3,6 @@ const constants = require("./constants");
 const Discord = require("discord.js");
 const format = require("date-fns/format");
 
-const textForFreeGames = (games) => {
-  return games.map(
-    (game) => `${game.title} is currently free until ${game.offerDates.endDate}`
-  );
-};
-
 const getWeeklyFreeEpicGames = async () => {
   try {
     let response = await axios(constants.APIS.EPIC_STORES_WEEKLY_FREE_GAMES);
@@ -87,7 +81,43 @@ const getFreeGamesEmbed = (game) => {
     .setTimestamp();
   return freeGameEmbed;
 };
+
+const getValidCommand = (command) => {
+  for (let validCommand of constants.COMMANDS) {
+    let keyWords = validCommand.keywords;
+    if (
+      keyWords.some((keyWord) => keyWord.toLowerCase() == command.toLowerCase())
+    )
+      return validCommand.id;
+    break;
+  }
+  return false;
+};
+
+const executeCommand = async (command, message) => {
+  switch (command) {
+    case constants.COMMANDNAMES.FREE:
+      message.reply("Searching for this weeks free games on EPIC Stores");
+      let games = await getWeeklyFreeEpicGames();
+      console.log(games);
+
+      if (games) {
+        games.forEach((game) => message.channel.send(getFreeGamesEmbed(game)));
+      }
+
+      break;
+    case constants.COMMANDNAMES.HELLO:
+      let response = response
+      break;
+    default:
+      console.log("Not recogzined");
+  }
+};
 module.exports = {
   getWeeklyFreeEpicGames,
   getFreeGamesEmbed,
+  getValidCommand,
+  executeCommand,
 };
+
+// console.log(executeCommand("FREE"));

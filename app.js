@@ -3,8 +3,8 @@ const constants = require("./constants");
 const utils = require("./utils");
 const bot = new Discord.Client();
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
 }
 
 const token = process.env.TOKEN;
@@ -29,21 +29,16 @@ bot.on("message", async (message) => {
   message.reply("Hello there");
   let prefix = `<@!${botID}>`;
   const withoutPrefix = message.content.slice(prefix.length).trim();
-  const split = withoutPrefix.split(" ");
-  const command = split[0];
-  const args = split.slice(1);
-  console.log({ command, args });
-
-  if (command.toUpperCase() == constants.COMMANDS.FREE) {
-    message.reply("Searching for this weeks free games on EPIC Stores");
-    let games = await utils.getWeeklyFreeEpicGames();
-
-    if (games) {
-      games.forEach((game) =>
-        message.channel.send(utils.getFreeGamesEmbed(game))
-      );
-    }
-
-    console.log(games);
+  const messageCommand = utils.getValidCommand(withoutPrefix);
+  // Check if the entire message is the command
+  if (messageCommand) {
+    await utils.executeCommand(messageCommand, message);
+  } else {
+    //TODO:
+    // command must contain args, parse the string to split it
+    const split = withoutPrefix.split(" ");
+    const command = split[0];
+    const args = split.slice(1);
+    console.log({ command, args });
   }
 });
