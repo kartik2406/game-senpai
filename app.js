@@ -2,6 +2,9 @@ const Discord = require("discord.js");
 const utils = require("./utils");
 const bot = new Discord.Client();
 
+// TODO: After adding few more commands refactor commands into their own files
+// https://discordjs.guide/command-handling/#dynamically-reading-command-files
+//https://discordjs.guide/command-handling/dynamic-commands.html#dynamically-executing-commands
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -34,7 +37,8 @@ bot.on("message", async (message) => {
   } else {
     //TODO:
     // command must contain args, parse the string to split it
-    const split = withoutPrefix.split(" ");
+    const split = withoutPrefix.split(/ +/);
+    console.log("split", split)
     const command = split[0];
     const args = split.slice(1);
     const commandName = utils.getValidCommand(command);
