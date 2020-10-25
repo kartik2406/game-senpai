@@ -6,8 +6,6 @@ const bot = new Discord.Client();
 
 const token = process.env.TOKEN;
 
-bot.login(token);
-
 const getChannel = (channelID) => {
   return new Promise((resolve, reject) => {
     bot.on("ready", () => {
@@ -17,6 +15,7 @@ const getChannel = (channelID) => {
   });
 };
 exports.handler = async (event) => {
+  bot.login(token);
   let games = await utils.getWeeklyFreeEpicGames();
   console.log("Games received", games);
   if (games) {
