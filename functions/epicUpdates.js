@@ -24,9 +24,7 @@ exports.handler = async (event) => {
 
   if (games) {
     const channel = await getChannel(channelID);
-    channel.games.forEach((game) =>
-      channel.send(utils.getFreeGamesEmbed(game))
-    );
+    games.forEach((game) => channel.send(utils.getFreeGamesEmbed(game)));
   }
   const subject = event.queryStringParameters.name || "World";
   return {
