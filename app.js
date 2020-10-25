@@ -38,7 +38,6 @@ bot.on("message", async (message) => {
     //TODO:
     // command must contain args, parse the string to split it
     const split = withoutPrefix.split(/ +/);
-    console.log("split", split)
     const command = split[0];
     const args = split.slice(1);
     const commandName = utils.getValidCommand(command);
