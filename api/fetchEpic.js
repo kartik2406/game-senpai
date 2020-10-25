@@ -9,7 +9,7 @@ bot.login(token);
 
 const getChannel = (channelID) => {
   return new Promise((resolve, reject) => {
-    bot.on("ready", () => {
+    bot.once("ready", () => {
       const channel = bot.channels.fetch(channelID);
       resolve(channel);
     });
@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     return res.json({
       status: 200,
       body: {
-        message: "hello world",
+        message: "Games found",
       },
     });
   }
