@@ -1,5 +1,5 @@
 //@ts-check
-const utils = require("../utils");
+const utils = require("./utils");
 const channelID = process.env.channelID; // TODO: To be read from config
 const Discord = require("discord.js");
 const bot = new Discord.Client();
