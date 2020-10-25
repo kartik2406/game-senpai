@@ -26,14 +26,14 @@ module.exports = async (req, res) => {
 
     await Promise.all(messagePromises);
 
-    res.json({
+    return res.json({
       status: 200,
       body: {
         message: "hello world",
       },
     });
   }
-  res.json({
+  return res.json({
     status: 400,
     body: {
       message: "No games found",
