@@ -24,11 +24,19 @@ exports.handler = async (event) => {
 
   if (games) {
     const channel = await getChannel(channelID);
-    games.forEach((game) => channel.send(utils.getFreeGamesEmbed(game)));
+    let messagePromises = games.map((game) =>
+      channel.send(utils.getFreeGamesEmbed(game))
+    );
+
+    await Promise.all(messagePromises);
+
+    return {
+      statusCode: 200,
+      body: `Games found`,
+    };
   }
-  const subject = event.queryStringParameters.name || "World";
   return {
-    statusCode: 200,
-    body: `Hello ${subject}!`,
+    statusCode: 400,
+    body: `No games found`,
   };
 };
