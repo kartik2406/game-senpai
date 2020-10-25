@@ -18,7 +18,7 @@ const getChannel = (channelID) => {
 };
 exports.handler = async (event) => {
   let games = await utils.getWeeklyFreeEpicGames();
-
+  console.log("Games received", games);
   if (games) {
     const channel = await getChannel(channelID);
     let messagePromises = games.map((game) =>
@@ -26,13 +26,16 @@ exports.handler = async (event) => {
     );
 
     await Promise.all(messagePromises);
+    console.log("Messages sent");
     bot.destroy();
+    console.log("Bot logged out!");
     return {
       statusCode: 200,
       body: `Games found`,
     };
   }
   bot.destroy();
+  console.log("Bot logged out!");
   return {
     statusCode: 400,
     body: `No games found`,
