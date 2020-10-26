@@ -135,10 +135,8 @@ const executeCommand = async (command, args, message) => {
     case constants.COMMANDNAMES.FREE:
       message.reply("Checking for this weeks free games on EPIC Store");
       let games = await getWeeklyFreeEpicGames();
-
-      if (games) {
-        games.forEach((game) => message.channel.send(getFreeGamesEmbed(game)));
-      }
+      let embeds = games.map((game) => utils.getFreeGamesEmbed(game));
+      message.channel.send({ embeds });
 
       break;
     default:
