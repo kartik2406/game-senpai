@@ -12,7 +12,7 @@ exports.handler = async (event) => {
   let games = await utils.getWeeklyFreeEpicGames();
   console.log("Games received", games);
   if (games) {
-    let embeds = utils.getFreeGamesEmbed(games);
+    let embeds = games.map((game) => utils.getFreeGamesEmbed(game));
     await webHookClient.send({
       embeds,
     });
