@@ -1,9 +1,38 @@
-const axios = require("axios");
+const axios = require("axios").default;
 const constants = require("./constants");
 const Discord = require("discord.js");
 const format = require("date-fns/format");
 const { random } = require("lodash");
 const { COMMMAND_RESPONSES } = require("./constants");
+
+axios.interceptors.request.use((x) => {
+  // to avoid overwriting if another interceptor
+  // already defined the same object (meta)
+  x.meta = x.meta || {};
+  x.meta.requestStartedAt = new Date().getTime();
+  return x;
+});
+
+axios.interceptors.response.use(
+  (x) => {
+    console.log(
+      `Execution time for: ${x.config.url} - ${
+        new Date().getTime() - x.config.meta.requestStartedAt
+      } ms`
+    );
+    return x;
+  },
+  // Handle 4xx & 5xx responses
+  (x) => {
+    console.error(
+      `Execution time for: ${x.config.url} - ${
+        new Date().getTime() - x.config.meta.requestStartedAt
+      } ms`
+    );
+    throw x;
+  }
+);
+
 const getWeeklyFreeEpicGames = async () => {
   try {
     let response = await axios(constants.APIS.EPIC_STORES_WEEKLY_FREE_GAMES);
@@ -106,10 +135,8 @@ const executeCommand = async (command, args, message) => {
     case constants.COMMANDNAMES.FREE:
       message.reply("Checking for this weeks free games on EPIC Store");
       let games = await getWeeklyFreeEpicGames();
-
-      if (games) {
-        games.forEach((game) => message.channel.send(getFreeGamesEmbed(game)));
-      }
+      let embeds = games.map((game) => utils.getFreeGamesEmbed(game));
+      message.channel.send({ embeds });
 
       break;
     default:
