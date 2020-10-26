@@ -2,28 +2,20 @@
 const utils = require("./utils");
 const channelID = process.env.channelID; // TODO: To be read from config
 const Discord = require("discord.js");
-const bot = new Discord.Client();
 
-const token = process.env.TOKEN;
-bot.login(token);
-let channel;
-bot.on("ready", () => {
-  console.log("Bot is ready!");
-  channel = bot.channels.fetch(channelID);
-});
-const getChannel = (channelID) => {
-  return channel;
-};
+const webHookClient = new Discord.WebhookClient(
+  process.env.WEBHOOK_ID,
+  process.env.WEBHOOK_TOKEN
+);
+
 exports.handler = async (event) => {
   let games = await utils.getWeeklyFreeEpicGames();
   console.log("Games received", games);
   if (games) {
-    const channel = await getChannel(channelID);
-    let messagePromises = games.map((game) =>
-      channel.send(utils.getFreeGamesEmbed(game))
-    );
-
-    await Promise.all(messagePromises);
+    let embeds = utils.getFreeGamesEmbed(games);
+    await webHookClient.send({
+      embeds,
+    });
     console.log("Messages sent");
     return {
       statusCode: 200,
