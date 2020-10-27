@@ -251,4 +251,5 @@ module.exports = {
   getValidCommand,
   executeCommand,
   saySomethingCool,
+  getSubscribers,
 };
