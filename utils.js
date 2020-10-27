@@ -138,16 +138,20 @@ const getSubsriberFromHook = ({ id, name, channelID, token }) => ({
 const getAirtableURI = (tableName) =>
   `${constants.AIRTABLE_BASE_URL}/${process.env.AIRTABLE_ID}/${tableName}`;
 
+const fetchSubscriberRecords = async () => {
+  let subscribers = await axios({
+    url: getAirtableURI("Subsribers"),
+    headers: {
+      Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
+    },
+  });
+  subscribers = subscribers.data.records;
+  return subscribers;
+};
 const getSubscribers = async () => {
   try {
-    let subscribers = await axios({
-      url: getAirtableURI("Subsribers"),
-      headers: {
-        Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
-      },
-    });
-    subscribers = subscribers.data;
-    subscribers = subscribers.records.map((record) => record.fields);
+    let subscribers = await fetchSubscriberRecords();
+    subscribers = subscribers.map((record) => record.fields);
     return subscribers;
   } catch (err) {
     console.error("Error fetching subsribers");
@@ -178,6 +182,21 @@ const addSubscriber = async (subscriber) => {
   }
 };
 
+const removeSubscriber = async (recordID) => {
+  try {
+    await axios.delete(
+      `${getAirtableURI("Subsribers")}?records[]=${recordID}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
+          "content-type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+      }
+    );
+  } catch (err) {
+    console.error("Could not delete record from the table", err);
+  }
+};
 const isSubscribed = (subscribers, channelID) => {
   let subscribedChannels = subscribers.map(
     (subscriber) => subscriber.channelID
@@ -213,6 +232,27 @@ const subscribe = async (message) => {
     }
   }
 };
+
+const unsubscribe = async (message) => {
+  const subscribers = await fetchSubscriberRecords();
+  console.log("subscriberRecords", subscribers);
+  let channelID = message.channel.id;
+  let record = subscribers.find(
+    (record) => record.fields.channelID == channelID
+  );
+  if (record) {
+    const webhook = new Discord.WebhookClient(
+      record.fields.id,
+      record.fields.token
+    );
+    await Promise.all([removeSubscriber(record.id), webhook.delete()]);
+
+    message.reply("This channel is now unsubscribed from weekly updates.");
+  } else {
+    message.reply("Looks like you are not currently subscribe.");
+  }
+};
+
 const executeCommand = async (command, args, message) => {
   // If you need to perform any specific action based on a command then you would need a case statement
   // If its just text reply it will be handled by default, just add replies in the constant file
@@ -227,6 +267,10 @@ const executeCommand = async (command, args, message) => {
     case constants.COMMANDNAMES.SUBSCRIBE:
       message.reply("Sure, I will get it done right away!");
       await subscribe(message);
+      break;
+    case constants.COMMANDNAMES.UNSUBSCRIBE:
+      message.reply("Sure, I will do that. Its sad to loos you :(");
+      await unsubscribe(message);
       break;
     default:
       let availableResponses = COMMMAND_RESPONSES[command]

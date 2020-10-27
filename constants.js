@@ -1,10 +1,11 @@
 module.exports = {
-  AIRTABLE_BASE_URL: 'https://api.airtable.com/v0',
+  AIRTABLE_BASE_URL: "https://api.airtable.com/v0",
   WEB_HOOK_NAME: "Game-Senpai",
   COMMANDNAMES: {
     HELLO: "HELLO",
     FREE: "FREE",
     SUBSCRIBE: "SUBSCRIBE",
+    UNSUBSCRIBE: "UNSUBSCRIBE",
   },
   COMMMAND_RESPONSES: {
     HELLO: ["Hello friend!", "Well hello there!"],
@@ -90,13 +91,18 @@ module.exports = {
     },
     {
       id: "SUBSCRIBE",
-      name: "Subsribe to weekly updates",
+      name: "Subscribe to weekly updates",
       keywords: [
         "Subscribe",
         "Keep me posted",
         "Epic updates",
         "Weekly updates",
       ],
+    },
+    {
+      id: "UNSUBSCRIBE",
+      name: "Unsubscribe to weekly updates",
+      keywords: ["Unsubscribe", "Do not send me updates"],
     },
   ],
   DATE_FORMAT: "do MMMM hh:mm a",
