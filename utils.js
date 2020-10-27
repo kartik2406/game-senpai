@@ -148,7 +148,6 @@ const getSubscribers = async () => {
     });
     subscribers = subscribers.data;
     subscribers = subscribers.records.map((record) => record.fields);
-    console.log("Subscribers", subscribers);
     return subscribers;
   } catch (err) {
     console.error("Error fetching subsribers");
@@ -188,7 +187,6 @@ const isSubscribed = (subscribers, channelID) => {
 
 const subscribe = async (message) => {
   const subscribers = await getSubscribers();
-  console.log("Sub list", subscribers);
   let channelID = message.channel.id;
   if (isSubscribed(subscribers, channelID)) {
     message.reply(
