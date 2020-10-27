@@ -1,29 +1,35 @@
 //@ts-check
 const utils = require("./utils");
-const channelID = process.env.channelID; // TODO: To be read from config
 const Discord = require("discord.js");
 
-const webHookClient = new Discord.WebhookClient(
-  process.env.WEBHOOK_ID,
-  process.env.WEBHOOK_TOKEN
-);
-
 exports.handler = async (event) => {
-  let games = await utils.getWeeklyFreeEpicGames();
-  console.log("Games received", games);
-  if (games) {
-    let embeds = games.map((game) => utils.getFreeGamesEmbed(game));
-    await webHookClient.send({
-      embeds,
-    });
-    console.log("Messages sent");
-    return {
-      statusCode: 200,
-      body: `Games found`,
-    };
+  try {
+    let [games, subscribers] = await Promise.all([
+      utils.getWeeklyFreeEpicGames(),
+      utils.getSubscribers(),
+    ]);
+
+    const webHookClients = subscribers.map(
+      (subscriber) => new Discord.WebhookClient(subscriber.id, subscriber.token)
+    );
+    console.log("Games received", games);
+    if (games) {
+      let embeds = games.map((game) => utils.getFreeGamesEmbed(game));
+      let sendUpdates = webHookClients.map((webHookClient) =>
+        webHookClient.send(embeds)
+      );
+      await Promise.all(sendUpdates);
+      console.log("Messages sent");
+      return {
+        statusCode: 200,
+        body: "Updates sent to subscribers",
+      };
+    }
+  } catch (err) {
+    console.error("Error occurred", err);
   }
   return {
     statusCode: 400,
-    body: `No games found`,
+    body: "Could not send updates to subscriber",
   };
 };

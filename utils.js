@@ -138,7 +138,7 @@ const getSubsriberFromHook = ({ id, name, channelID, token }) => ({
 const getAirtableURI = (tableName) =>
   `${constants.AIRTABLE_BASE_URL}/${process.env.AIRTABLE_ID}/${tableName}`;
 
-const getSubscriberList = async () => {
+const getSubscribers = async () => {
   try {
     let subscribers = await axios({
       url: getAirtableURI("Subsribers"),
@@ -187,7 +187,7 @@ const isSubscribed = (subscribers, channelID) => {
 };
 
 const subscribe = async (message) => {
-  const subscribers = await getSubscriberList();
+  const subscribers = await getSubscribers();
   console.log("Sub list", subscribers);
   let channelID = message.channel.id;
   if (isSubscribed(subscribers, channelID)) {
@@ -222,11 +222,12 @@ const executeCommand = async (command, args, message) => {
     case constants.COMMANDNAMES.FREE:
       message.reply("Checking for this weeks free games on EPIC Store");
       let games = await getWeeklyFreeEpicGames();
-      let embeds = games.map((game) => utils.getFreeGamesEmbed(game));
-      message.channel.send({ embeds });
+      let embeds = games.map((game) => getFreeGamesEmbed(game));
+      embeds.forEach((embed) => message.channel.send({ embed }));
 
       break;
     case constants.COMMANDNAMES.SUBSCRIBE:
+      message.reply("Sure, I will get it done right away!");
       await subscribe(message);
       break;
     default:
