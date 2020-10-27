@@ -1,7 +1,10 @@
 module.exports = {
+  AIRTABLE_BASE_URL: 'https://api.airtable.com/v0',
+  WEB_HOOK_NAME: "Game-Senpai",
   COMMANDNAMES: {
     HELLO: "HELLO",
     FREE: "FREE",
+    SUBSCRIBE: "SUBSCRIBE",
   },
   COMMMAND_RESPONSES: {
     HELLO: ["Hello friend!", "Well hello there!"],
@@ -65,7 +68,7 @@ module.exports = {
       "Happiness can be found even in the darkest of times, when one only remembers to turn on the light.",
       "The most dangerous man in the world is the one who doesn't know what he doesn't know.",
       "Are you paying attention?",
-      "I am running away from my responsibilities. And it feels good."
+      "I am running away from my responsibilities. And it feels good.",
     ],
   },
   COMMANDS: [
@@ -83,6 +86,16 @@ module.exports = {
         "I want some free games",
         "I want free games",
         "Is Epic giving away free games?",
+      ],
+    },
+    {
+      id: "SUBSCRIBE",
+      name: "Subsribe to weekly updates",
+      keywords: [
+        "Subscribe",
+        "Keep me posted",
+        "Epic updates",
+        "Weekly updates",
       ],
     },
   ],

@@ -128,6 +128,93 @@ const saySomethingCool = (message) => {
   message.reply(coolResponses[random(0, toal)]);
 };
 
+const getSubsriberFromHook = ({ id, name, channelID, token }) => ({
+  id,
+  name,
+  channelID,
+  token,
+});
+
+const getAirtableURI = (tableName) =>
+  `${constants.AIRTABLE_BASE_URL}/${process.env.AIRTABLE_ID}/${tableName}`;
+
+const getSubscriberList = async () => {
+  try {
+    let subscribers = await axios({
+      url: getAirtableURI("Subsribers"),
+      headers: {
+        Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
+      },
+    });
+    subscribers = subscribers.data;
+    subscribers = subscribers.records.map((record) => record.fields);
+    console.log("Subscribers", subscribers);
+    return subscribers;
+  } catch (err) {
+    console.error("Error fetching subsribers");
+    return [];
+  }
+};
+
+const addSubscriber = async (subscriber) => {
+  try {
+    await axios.post(
+      getAirtableURI("Subsribers "),
+      {
+        records: [
+          {
+            fields: subscriber,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (err) {
+    console.error("Could not add record to the table", err);
+  }
+};
+
+const isSubscribed = (subscribers, channelID) => {
+  let subscribedChannels = subscribers.map(
+    (subscriber) => subscriber.channelID
+  );
+  return subscribedChannels.includes(channelID);
+};
+
+const subscribe = async (message) => {
+  const subscribers = await getSubscriberList();
+  console.log("Sub list", subscribers);
+  let channelID = message.channel.id;
+  if (isSubscribed(subscribers, channelID)) {
+    message.reply(
+      "Oh cool, looks like this channel is already subscribed for weekly updates. Will keep you posted."
+    );
+  } else {
+    try {
+      let webhook = await message.channel.createWebhook(
+        constants.WEB_HOOK_NAME,
+        {
+          avatar:
+            "https://cdn.discordapp.com/avatars/769239856814620723/8de7bc035011cc11e912c780b4b5fd65.webp",
+        }
+      );
+      addSubscriber(getSubsriberFromHook(webhook));
+      message.reply(
+        "Awesome! This channel is now subscribed to weekly updates. Will keep you posted."
+      );
+    } catch (err) {
+      console.error("Error while subsribing, could not create webhook", err);
+      message.reply(
+        "Sorry! we could not complete your request. Please try again later."
+      );
+    }
+  }
+};
 const executeCommand = async (command, args, message) => {
   // If you need to perform any specific action based on a command then you would need a case statement
   // If its just text reply it will be handled by default, just add replies in the constant file
@@ -138,6 +225,9 @@ const executeCommand = async (command, args, message) => {
       let embeds = games.map((game) => utils.getFreeGamesEmbed(game));
       message.channel.send({ embeds });
 
+      break;
+    case constants.COMMANDNAMES.SUBSCRIBE:
+      await subscribe(message);
       break;
     default:
       let availableResponses = COMMMAND_RESPONSES[command]
