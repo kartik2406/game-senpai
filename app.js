@@ -44,8 +44,28 @@ bot.on("message", async (message) => {
     if (commandName) {
       await utils.executeCommand(commandName, args, message);
     } else {
-      utils.saySomethingCool(message)
+      utils.saySomethingCool(message);
       console.log("Not valid");
     }
+  }
+});
+//When the webhook is deleted by some one, remove from our stored list
+bot.on("webhookUpdate", async (data) => {
+  // server.guild.fetchWebhooks();
+  let channel = bot.channels.cache.get(data.id); // get the channel for which webhook update was called
+  let webhooks = await channel.fetchWebhooks(); //This will contain all webhooks accept the deleted one
+  let webhookIDs = webhooks.map((webhook) => webhook.id);
+  let subscribers = await utils.fetchSubscriberRecords();
+
+  //fetch the subscriber having this channel id
+  let channelsSubscriberWebhook = subscribers.find(
+    (subscriber) => subscriber.fields.channelID == data.id
+  );
+
+  //We have this webhook info with us, but this webhook is no more on the channel
+  // remove this from our store
+  if (!webhookIDs.includes(channelsSubscriberWebhook.fields.id)) {
+    console.log("Removing subscriber from our list");
+    await utils.removeSubscriber(channelsSubscriberWebhook.id);
   }
 });

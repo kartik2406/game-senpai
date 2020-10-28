@@ -294,4 +294,6 @@ module.exports = {
   executeCommand,
   saySomethingCool,
   getSubscribers,
+  fetchSubscriberRecords,
+  removeSubscriber
 };
