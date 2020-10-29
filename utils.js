@@ -69,9 +69,11 @@ const getWeeklyFreeEpicGames = async () => {
         return game;
       }
     );
+    let currentDate = new Date();
     let currentFreeGames = freeGamesList.filter(
       (game) =>
-        game.discountPrice === "0" || game.offerDates.endDate <= new Date()
+        game.discountPrice === "0" &&
+        (game.offerDates.startDate <= currentDate && new Date() <= currentDate)
     );
     return currentFreeGames;
   } catch (err) {
@@ -87,7 +89,7 @@ const getFreeGamesEmbed = (game) => {
     .setColor("#0099ff")
     .setTitle(game.title)
     .setAuthor("Currently free on Epic Games store")
-    .setURL(game.url)
+    .setURL(game.url || "-")
     .setDescription(
       `Actual price of this game is ${game.originalPrice}, currently its FREE!`
     )
@@ -99,11 +101,11 @@ const getFreeGamesEmbed = (game) => {
       },
       {
         name: "Developer",
-        value: game.developer,
+        value: game.developer || "-",
       },
       {
         name: "Publisher",
-        value: game.publisher,
+        value: game.publisher || "-",
       }
     )
     .setImage(image)
@@ -235,7 +237,6 @@ const subscribe = async (message) => {
 
 const unsubscribe = async (message) => {
   const subscribers = await fetchSubscriberRecords();
-  console.log("subscriberRecords", subscribers);
   let channelID = message.channel.id;
   let record = subscribers.find(
     (record) => record.fields.channelID == channelID
@@ -261,6 +262,7 @@ const executeCommand = async (command, args, message) => {
       message.reply("Checking for this weeks free games on EPIC Store");
       let games = await getWeeklyFreeEpicGames();
       let embeds = games.map((game) => getFreeGamesEmbed(game));
+
       embeds.forEach((embed) => message.channel.send({ embed }));
 
       break;
@@ -295,5 +297,5 @@ module.exports = {
   saySomethingCool,
   getSubscribers,
   fetchSubscriberRecords,
-  removeSubscriber
+  removeSubscriber,
 };
