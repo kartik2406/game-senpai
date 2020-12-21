@@ -19,7 +19,6 @@
     "date-fns": "^2.16.1",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
-    "erlpack": "github:discord/erlpack",
     "lodash": "^4.17.20",
     "utf-8-validate": "^5.0.2",
     "zlib-sync": "^0.1.7"
