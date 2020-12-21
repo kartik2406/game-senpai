@@ -48,11 +48,13 @@ const getWeeklyFreeEpicGames = async () => {
           if (attr.key == "developerName") developer = attr.value;
         });
 
-        let offerDetails = gameDetails.promotions.promotionalOffers.length
-          ? gameDetails.promotions.promotionalOffers
-          : gameDetails.promotions.upcomingPromotionalOffers;
-
-        offerDetails = offerDetails[0].promotionalOffers[0];
+        let offerDetails;
+        if (gameDetails.promotions)
+          offerDetails = gameDetails.promotions.promotionalOffers.length
+            ? gameDetails.promotions.promotionalOffers
+            : gameDetails.promotions.upcomingPromotionalOffers;
+        if (offerDetails && offerDetails.length)
+          offerDetails = offerDetails[0].promotionalOffers[0];
         let game = {
           title: gameDetails.title,
           images: gameDetails.keyImages,
@@ -73,7 +75,8 @@ const getWeeklyFreeEpicGames = async () => {
     let currentFreeGames = freeGamesList.filter(
       (game) =>
         game.discountPrice === "0" &&
-        (game.offerDates.startDate <= currentDate && new Date() <= currentDate)
+        game.offerDates.startDate <= currentDate &&
+        new Date() <= currentDate
     );
     return currentFreeGames;
   } catch (err) {
