@@ -60,8 +60,8 @@ const getWeeklyFreeEpicGames = async () => {
           images: gameDetails.keyImages,
           url: `${constants.APIS.EPIC_STORES_URL}/${gameDetails.productSlug}`,
           offerDates: {
-            startDate: new Date(offerDetails.startDate),
-            endDate: new Date(offerDetails.endDate),
+            startDate: offerDetails ? new Date(offerDetails.startDate) : "-",
+            endDate: offerDetails ? new Date(offerDetails.endDate) : "-",
           },
           publisher,
           developer,
