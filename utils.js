@@ -75,6 +75,7 @@ const getWeeklyFreeEpicGames = async () => {
     let currentFreeGames = freeGamesList.filter(
       (game) =>
         game.discountPrice === "0" &&
+        game.offerDates &&
         game.offerDates.startDate <= currentDate &&
         new Date() <= currentDate
     );
