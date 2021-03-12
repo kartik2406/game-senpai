@@ -89,6 +89,9 @@ const getWeeklyFreeEpicGames = async () => {
 const getFreeGamesEmbed = (game) => {
   let image = game.images[0].url;
   let thumbNail = game.images[1] ? game.images[1].url : game.images[0].url;
+  image = encodeURI(image);
+  thumbNail = encodeURI(thumbNail);
+
   const freeGameEmbed = new Discord.MessageEmbed()
     .setColor("#0099ff")
     .setTitle(game.title)
@@ -266,7 +269,7 @@ const executeCommand = async (command, args, message) => {
       message.reply("Checking for this weeks free games on EPIC Store");
       let games = await getWeeklyFreeEpicGames();
       let embeds = games.map((game) => getFreeGamesEmbed(game));
-
+      console.log("Embeds", embeds);
       embeds.forEach((embed) => message.channel.send({ embed }));
 
       break;
